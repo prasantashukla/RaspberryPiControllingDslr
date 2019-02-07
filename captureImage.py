@@ -8,8 +8,9 @@ import signal, os, subprocess
 # reboot the raspberry pi
 
 def killGphoto2Process():
-    pkill -INT gphoto2     #send interrupt (i.e. ctrl+c) to gphoto2
-    sleep 0.1   
+    p = subprocess.Popen(['pkill', '-INT', 'gphoto2'], stdout=subprocess.PIPE)
+    out, err = p.communicate()
+    sleep(0.1)
     #p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
     #out, err = p.communicate()
 
