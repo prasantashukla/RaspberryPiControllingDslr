@@ -8,15 +8,17 @@ import signal, os, subprocess
 # reboot the raspberry pi
 
 def killGphoto2Process():
-    p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
-    out, err = p.communicate()
+    pkill -INT gphoto2     #send interrupt (i.e. ctrl+c) to gphoto2
+    sleep 0.1   
+    #p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+    #out, err = p.communicate()
 
     # Search for the process we want to kill
-    for line in out.splitlines():
-        if b'gvfsd-gphoto2' in line:
+    #for line in out.splitlines():
+        #if b'gvfsd-gphoto2' in line:
             # Kill that process!
-            pid = int(line.split(None,1)[0])
-            os.kill(pid, signal.SIGKILL)
+            #pid = int(line.split(None,1)[0])
+            #os.kill(pid, signal.SIGKILL)
 
 picID = "PiShots"
 
