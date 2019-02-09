@@ -8,6 +8,7 @@ def lambda_handler(event, context):
     # smileConfidencePercentage = event["smileConfidence"]
     # noOfPeopleInPhoto = event["noOfPeopleInPhoto"]
     
+    # Shuklaji : algo for scoring, storing in ddb, api for retrieving
     return {
         'statusCode': 200,
         'body': json.dumps('Success')
