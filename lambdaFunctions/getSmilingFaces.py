@@ -1,9 +1,21 @@
 import boto3
 import json
-import sys
-from UserBoundingBox import UserBoundingBox
 
-client=boto3.client('rekognition', region_name='us-east-1')
+class BoundingBox(object):
+    def __init__(self, Left, Top, Height, Weight):
+        self.Left = Left
+        self.Top = Top
+        self.Height = Height
+        self.Weight = Weight
+
+class UserBoundingBox(object):
+    def __init__(self, boundingBox, username, smileConfidence):
+        self.boundingBox = boundingBox
+        self.username = username
+        self.smileConfidence = smileConfidence
+
+rekognition_client=boto3.client('rekognition', region_name='us-east-1')
+lambda_client=boto3.client('lambda', region_name='us-west-2')
 s3 = boto3.client('s3', region_name='us-east-1')
 
 TARGET_BUCKET = "aft-offsite"
@@ -29,9 +41,13 @@ def lambda_handler(event, context):
         'body': json.dumps('Hello from Lambda!')
     }
 
-def recordSmileScore(participant, UserBoundingBox):
-    print(participant)
-
+def recordSmileScore(participant, userBoundingBoxes):
+    
+    event = {"participant" : participant, "userBoundingBoxes" : json.dumps(userBoundingBoxes, default=lambda o: o.__dict__)}
+    lambda_client.invoke(FunctionName="recordParticipantSmile", 
+                            InvocationType='Event', 
+                            Payload=json.dumps(userBoundingBoxes, default=lambda o: o.__dict__))
+                        
 def isSmileOnFace(faceDetail):
     smile = faceDetail["Smile"]
     if (smile["Value"] == True):
@@ -44,8 +60,8 @@ def getSmilingUserBoundingBoxes(detectFacesResponse):
     smilingUserBoundingBoxes = []
     for faceDetail in faceDetails:
         if (faceDetail["Confidence"] > FACE_CONFIDENCE_THRESHOLD and isSmileOnFace(faceDetail)): #Face Confidence check
-            print("Smile detected")
-            boundingBox = faceDetail["BoundingBox"]
+            bb = faceDetail["BoundingBox"]
+            boundingBox = BoundingBox(bb["Left"], bb["Top"], bb["Height"], bb["Width"])
             smileConfidence = faceDetail["Smile"]["Confidence"]
             userBoundingBox = UserBoundingBox(boundingBox, None, smileConfidence)
             smilingUserBoundingBoxes.append(userBoundingBox)
@@ -64,7 +80,7 @@ def getListOfParticipants():
     return keys
 
 def detectfaces(targetBucket, imageName):
-    response = client.detect_faces(
+    response = rekognition_client.detect_faces(
         Image={
             'S3Object': {
                 'Bucket': targetBucket,
@@ -78,7 +94,6 @@ def detectfaces(targetBucket, imageName):
     return response
     
 
-#u = UserBoundingBox("sdfdf", None, 99)
-#print(u.BoundingBox)
-event = {"imageFileName":"1549588233.jpg"}
-response = lambda_handler(event, None)
+# For testing
+#event = {"imageFileName":"1549588233.jpg"}
+#response = lambda_handler(event, None)
