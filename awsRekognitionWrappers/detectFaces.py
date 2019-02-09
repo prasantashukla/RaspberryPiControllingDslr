@@ -2,7 +2,7 @@
 # Look for response.FaceDetails array
 # FaceDetail.BoundingBox
 # FaceDetail.Confidence >=95
-# FaceDetail.Smile
+# FaceDetail.Smile.(Value as true/false and Confidence)
 import boto3
 client=boto3.client('rekognition', region_name='us-east-1')
 
@@ -22,7 +22,9 @@ def detectfaces(targetBucket, imageName):
     )
     return response
 
+'''
 print("Detecting all the faces")
 
 response = detectfaces(targetBucket, "1549588233.jpg")
 print(response)
+'''
