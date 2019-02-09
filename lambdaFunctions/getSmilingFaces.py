@@ -64,8 +64,10 @@ def getListOfParticipants():
     """Get a list of all keys in an S3 bucket."""
     keys = []
 
-    theobjects = s3.list_objects_v2(Bucket=TARGET_BUCKET, StartAfter=startAfter )
+    theobjects = s3.list_objects_v2(Bucket=TARGET_BUCKET, Prefix=startAfter, Delimiter='/' )
     for object in theobjects['Contents']:
+        key = object['Key']
+        
         print(object['Key'])
         keys.append(object['Key'])
 

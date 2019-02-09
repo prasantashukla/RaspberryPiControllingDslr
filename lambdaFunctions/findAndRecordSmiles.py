@@ -78,8 +78,6 @@ def getArea(boundingBox):
     return boundingBox["Height"] * boundingBox["Width"]
 
 def getOverlapAreaPercentage(boundingBox1, boundingBox2):
-    print(boundingBox1)
-    print(boundingBox2)
     # boundingBox1 Variables
     l1 = boundingBox1["Left"]
     t1 = boundingBox1["Top"]
