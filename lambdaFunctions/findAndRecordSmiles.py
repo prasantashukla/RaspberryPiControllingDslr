@@ -56,8 +56,6 @@ def getFaceMatchBoundingBox(compareFacesResponse):
     return faceMatchMaxSimilarity, boundingBox
 
 def compare_faces(participant, targetBucket, targetImageName):
-    print("participant", participant,"targetBucket", targetBucket,"targetImageName", targetImageName)
-    print("hello")
     response = rekognition_client.compare_faces(
         SourceImage={
             'S3Object': {
