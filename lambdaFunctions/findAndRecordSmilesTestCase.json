@@ -1,0 +1,55 @@
+{
+    "participant": "participants/shravana.jpeg",
+    "userBoundingBoxes": [
+        {
+            "boundingBox": {
+                "Left": 0.1643836349248886,
+                "Top": 0.4418974816799164,
+                "Height": 0.09491986036300659,
+                "Weight": 0.04508400708436966
+            },
+            "username": null,
+            "smileConfidence": 99.98258972167969
+        },
+        {
+            "boundingBox": {
+                "Left": 0.6217398643493652,
+                "Top": 0.45531606674194336,
+                "Height": 0.07987475395202637,
+                "Weight": 0.03209336847066879
+            },
+            "username": null,
+            "smileConfidence": 96.99549865722656
+        },
+        {
+            "boundingBox": {
+                "Left": 0.36954253911972046,
+                "Top": 0.3948459327220917,
+                "Height": 0.07638522982597351,
+                "Weight": 0.031576842069625854
+            },
+            "username": null,
+            "smileConfidence": 99.31941223144531
+        },
+        {
+            "boundingBox": {
+                "Left": 0.3128792345523834,
+                "Top": 0.4378890097141266,
+                "Height": 0.06402617692947388,
+                "Weight": 0.030113626271486282
+            },
+            "username": null,
+            "smileConfidence": 99.81243133544922
+        },
+        {
+            "boundingBox": {
+                "Left": 0.6951570510864258,
+                "Top": 0.45493584871292114,
+                "Height": 0.052471961826086044,
+                "Weight": 0.025277912616729736
+            },
+            "username": null,
+            "smileConfidence": 54.999603271484375
+        }
+    ]
+}

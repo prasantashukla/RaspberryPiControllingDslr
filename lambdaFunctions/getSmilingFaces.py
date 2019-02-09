@@ -43,10 +43,10 @@ def lambda_handler(event, context):
 
 def recordSmileScore(participant, userBoundingBoxes):
     
-    event = {"participant" : participant, "userBoundingBoxes" : json.dumps(userBoundingBoxes, default=lambda o: o.__dict__)}
+    event = {"participant" : participant, "userBoundingBoxes" : userBoundingBoxes}
     lambda_client.invoke(FunctionName="recordParticipantSmile", 
                             InvocationType='Event', 
-                            Payload=json.dumps(userBoundingBoxes, default=lambda o: o.__dict__))
+                            Payload=json.dumps(event, default=lambda o: o.__dict__))
                         
 def isSmileOnFace(faceDetail):
     smile = faceDetail["Smile"]
@@ -92,8 +92,6 @@ def detectfaces(targetBucket, imageName):
         ]
     )
     return response
-    
-
 # For testing
-#event = {"imageFileName":"1549588233.jpg"}
-#response = lambda_handler(event, None)
+event = {"imageFileName":"1549588233.jpg"}
+response = lambda_handler(event, None)
