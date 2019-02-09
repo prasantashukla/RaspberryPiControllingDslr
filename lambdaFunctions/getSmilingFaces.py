@@ -1,17 +1,18 @@
 import boto3
 import json
 
-rekognition_client=boto3.client('rekognition', region_name='us-east-1')
+rekognition_client=boto3.client('rekognition', region_name='us-west-2')
 lambda_client=boto3.client('lambda', region_name='us-west-2')
-s3 = boto3.client('s3', region_name='us-east-1')
+s3 = boto3.client('s3', region_name='us-west-2')
 
-TARGET_BUCKET = "aft-offsite"
-PARTIPANTS_FOLDER = "participants"
+TARGET_BUCKET = "aft-offsite-us-west-2"
+PARTIPANTS_FOLDER = "participants/"
 SMILE_CONFIDENCE_THRESHOLD = 90
 FACE_CONFIDENCE_THRESHOLD = 95
 
 def lambda_handler(event, context):
-    detectFacesResponse = detectfaces(TARGET_BUCKET, event["imageFileName"])
+    targetImageFileName = event["imageFileName"]
+    detectFacesResponse = detectfaces(TARGET_BUCKET, targetImageFileName)
     # Get Bounding Box list having smiles
     smilingUserBoundingBoxes = getSmilingUserBoundingBoxes(detectFacesResponse)
     print("Total ", len(smilingUserBoundingBoxes), " smiles detected")
@@ -21,16 +22,19 @@ def lambda_handler(event, context):
 
     participants = getListOfParticipants()
     for participant in participants:
-        recordSmileScore(participant, smilingUserBoundingBoxes)
+        recordSmileScore(participant, targetImageFileName, smilingUserBoundingBoxes)
     
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
     }
 
-def recordSmileScore(participant, smilingUserBoundingBoxes):
+def recordSmileScore(participant, targetImageFileName, smilingUserBoundingBoxes):
     
-    event = {"target_bucket" : TARGET_BUCKET ,"participant" : participant, "smilingUserBoundingBoxes" : smilingUserBoundingBoxes}
+    event = {"target_bucket" : TARGET_BUCKET ,
+                "participant" : participant, 
+                "targetImageFileName" : targetImageFileName,
+                "smilingUserBoundingBoxes" : smilingUserBoundingBoxes}
     lambda_client.invoke(FunctionName="recordParticipantSmile", 
                             InvocationType='Event', 
                             Payload=json.dumps(event, default=lambda o: o.__dict__))
@@ -56,12 +60,13 @@ def getSmilingUserBoundingBoxes(detectFacesResponse):
 
 
 def getListOfParticipants():
-    startAfter = PARTIPANTS_FOLDER+"/"
+    startAfter = PARTIPANTS_FOLDER
     """Get a list of all keys in an S3 bucket."""
     keys = []
 
     theobjects = s3.list_objects_v2(Bucket=TARGET_BUCKET, StartAfter=startAfter )
     for object in theobjects['Contents']:
+        print(object['Key'])
         keys.append(object['Key'])
 
     return keys
@@ -94,5 +99,5 @@ class UserBoundingBox(object):
         self.username = username
         self.smileConfidence = smileConfidence
 # For testing
-event = {"imageFileName":"1549588233.jpg"}
+event = {"imageFileName":"smileCandidates/1549588233.jpg"}
 response = lambda_handler(event, None)
