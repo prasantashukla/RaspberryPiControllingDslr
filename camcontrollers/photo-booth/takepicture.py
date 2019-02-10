@@ -19,7 +19,7 @@ BUCKET_NAME = "aft-offsite-us-west-2"
 PHOTO_BOOTH_FOLDER="photobooth-pics/"
 PARTICIPANTS_FOLDER="participants/"
 
-picID = "PiShots"
+PIC_ID = "PiShots"
 
 s3 = boto3.client('s3')
 
@@ -28,9 +28,18 @@ def takePicture():
     print("Taking picture")
     shot_date = datetime.now().strftime("%Y-%m-%d")
     shot_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    c.createSaveFolder(shot_date)
+    c.createSaveFolder(shot_date+ PIC_ID)
     c.captureImages()
-    c.renameFiles(shot_time + picID)
+    fileName = c.renameFiles(shot_time + PIC_ID)
+
+    response = jsonify({"userId":"avidubey", "picName":fileName})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    #cars = request.form
+    print("returning response after successful photo capture")
+    return response
+
+
     
 def uploadGroupPicAndEmail():
     print("recovered")

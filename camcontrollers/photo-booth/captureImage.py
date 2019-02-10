@@ -7,6 +7,11 @@ import signal, os, subprocess
 # whenever we turn on the camera or
 # reboot the raspberry pi
 
+clearCommand = ["--folder", "/store_00010001/DCIM/100D3200", \
+                "--delete-all-files", "-R"]
+triggerCommand = ["--trigger-capture"]
+downloadCommand = ["--get-all-files"]
+
 def killGphoto2Process():
     p = subprocess.Popen(['pkill', '-INT', 'gphoto2'], stdout=subprocess.PIPE)
     out, err = p.communicate()
@@ -21,15 +26,10 @@ def killGphoto2Process():
             #pid = int(line.split(None,1)[0])
             #os.kill(pid, signal.SIGKILL)
 
-#picID = "PiShots"
+def runGpCommand(cmd):
+    gp(cmd)
 
-clearCommand = ["--folder", "/store_00010001/DCIM/100D3200", \
-                "--delete-all-files", "-R"]
-triggerCommand = ["--trigger-capture"]
-downloadCommand = ["--get-all-files"]
-
-def createSaveFolder(shot_date):
-    folder_name = shot_date + picID
+def createSaveFolder(folder_name):
     save_location = "/tmp/" + folder_name
     try:
         os.makedirs(save_location)
@@ -38,8 +38,9 @@ def createSaveFolder(shot_date):
     os.chdir(save_location)
 
 def captureImages():
+    killGphoto2Process()
     gp(triggerCommand)
-    sleep(5)
+    sleep(3)
     gp(downloadCommand)
     gp(clearCommand)
 
@@ -48,7 +49,8 @@ def renameFiles(picId):
         if len(filename) < 13:
             if filename.endswith(".JPG"):
                 os.rename(filename, (picId + ".JPG"))
-                print("Renamed the JPG")
+                print("Renamed the JPG as " + picId)
+    return "dummyFileName"
 
 #killGphoto2Process()
 #gp(clearCommand)
