@@ -19,6 +19,8 @@ BUCKET_NAME = "aft-offsite-us-west-2"
 PHOTO_BOOTH_FOLDER="photobooth-pics/"
 PARTICIPANTS_FOLDER="participants/"
 
+picID = "PiShots"
+
 s3 = boto3.client('s3')
 
 @app.route('/takepicture', methods=['GET', 'POST'])
@@ -28,7 +30,7 @@ def takePicture():
     shot_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     c.createSaveFolder(shot_date)
     c.captureImages()
-    c.renameFiles()
+    c.renameFiles(shot_time + picID)
     
 def uploadGroupPicAndEmail():
     print("recovered")

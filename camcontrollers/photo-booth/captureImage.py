@@ -21,7 +21,7 @@ def killGphoto2Process():
             #pid = int(line.split(None,1)[0])
             #os.kill(pid, signal.SIGKILL)
 
-picID = "PiShots"
+#picID = "PiShots"
 
 clearCommand = ["--folder", "/store_00010001/DCIM/100D3200", \
                 "--delete-all-files", "-R"]
@@ -43,21 +43,22 @@ def captureImages():
     gp(downloadCommand)
     gp(clearCommand)
 
-def renameFiles():
+def renameFiles(picId):
     for filename in os.listdir("."):
         if len(filename) < 13:
             if filename.endswith(".JPG"):
-                os.rename(filename, (shot_time + picID + ".JPG"))
+                os.rename(filename, (picId + ".JPG"))
                 print("Renamed the JPG")
 
-killGphoto2Process()
-gp(clearCommand)
+#killGphoto2Process()
+#gp(clearCommand)
 
-while True:
-	shot_date = datetime.now().strftime("%Y-%m-%d")
-	shot_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	createSaveFolder(shot_date)
-	captureImages()
-	renameFiles()
+
+#while True:
+#	shot_date = datetime.now().strftime("%Y-%m-%d")
+#	shot_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#	createSaveFolder(shot_date)
+#	captureImages()
+#	renameFiles()
 
 #>
