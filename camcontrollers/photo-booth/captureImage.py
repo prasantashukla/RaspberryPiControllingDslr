@@ -43,11 +43,11 @@ def captureImages():
     gp(downloadCommand)
     gp(clearCommand)
 
-def renameFiles(ID):
+def renameFiles():
     for filename in os.listdir("."):
         if len(filename) < 13:
             if filename.endswith(".JPG"):
-                os.rename(filename, (shot_time + ID + ".JPG"))
+                os.rename(filename, (shot_time + picID + ".JPG"))
                 print("Renamed the JPG")
 
 killGphoto2Process()
@@ -58,6 +58,6 @@ while True:
 	shot_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	createSaveFolder(shot_date)
 	captureImages()
-	renameFiles(picID)
+	renameFiles()
 
 #>

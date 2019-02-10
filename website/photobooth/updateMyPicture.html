@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>AFT Offsite 2019</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var cars = [
+            { "make": "Porsche", "model": "911S" },
+            { "make": "Mercedes-Benz", "model": "220SE" },
+            { "make": "Jaguar", "model": "Mark VII" }
+        ];
+
+        //var $loading = $('#loadingDiv').hide();
+        jQuery.ajaxSetup({
+            beforeSend: function () {
+                $('#loadingDiv').show();
+            },
+            complete: function () {
+                $('#loadingDiv').hide();
+            },
+            success: function () { }
+        });
+        function updatePicture() {
+            var datastring = $('#form1').serialize();
+            /**
+            $.post("http://localhost:5000/takepicture", datastring, function (data) {
+                console.log(data.picName);
+            }, "json");
+
+            **/
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:5000/takepicture',
+                data: datastring,
+                success: function (result) {
+                        console.log(JSON.stringify(result));
+                }
+            });
+        };
+
+    </script>
+    <div class="jumbotron text-center">
+        <h1>AFt Offsite 2019 (Beta)</h1>
+        <h2>Update my picture</h2>
+        <p>Take a picture and enter your amazonUserId and we would update our records.</p>
+    </div>
+    <div id="loadingDiv" name="loadingDiv" hidden=true>
+        <img src="loading7_gray.gif" />
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <form id="form1" name="form1" onsubmit="return updatePicture()">
+                    <div class="form-group row">
+                        <a href="#" class="btn btn-info" role="button">Take picture</a>
+                    </div>
+                    <div class="form-group row" id="userIdForm">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Your Amazon userId</label>
+                        <input type="text" class="form-control-plaintext" id="userId" name="userId">
+                        <input class="btn btn-primary" type="submit" value="Submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+</html>

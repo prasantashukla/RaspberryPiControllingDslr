@@ -18,8 +18,8 @@
   
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
-            <button type="button" class="btn btn-primary btn-block btn-lg">Take a picture</button>
+        <div class="col-lg-12">
+            <a class="btn btn-primary btn-block btn-lg" href="takePicture.html">Take a picture</a>
         </div>
         <div class="col-lg-12">
             <h3></h3>
@@ -30,10 +30,28 @@
         <div class="col-lg-12">
             <h3></h3>
         </div>
-        <div class="col-sm-12">
-            <button type="button" class="btn-info btn-block btn-lg">Update my picture</button>
+        <div class="col-lg-12">
+            <a class="btn btn-info btn-block btn-lg" href="updateMyPicture.html">Update my picture</a>
         </div>
-  </div>
+    </div>
+</div>
+
+<div class="takePictureContainer">
+    <div class="row">
+        <div class="col-lg-12">
+            <a class="btn btn-primary btn-block btn-lg" href="takePicture.html">Take a picture</a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $("#my_button").on('click', function() {
+        $.get("http://localhost:8080/cgi-bin/my_prog.py", function(data) {
+            $("#ajax_results").text(data);
+        })
+    });
+</script>
 </div>
 </body>
 </html>
