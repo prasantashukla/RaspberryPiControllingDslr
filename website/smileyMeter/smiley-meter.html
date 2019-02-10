@@ -22,19 +22,37 @@
     <script src="../bootstrap/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 
+	<input type="button" value="Refresh" id="button"/>
+    <div id="div1">
+        
+    </div>
     <div>
         <canvas id="myChart" width="400" height="400"></canvas>
     </div>
     
     <script>
+	
+	$(document).ready(function(){
+	  $("#button").click(function(){
+	    alert("Hi");
+		$.ajax({url: "https://5xj5iacnnl.execute-api.us-west-2.amazonaws.com/prod/smiles", 
+		dataType: "json",
+		success: function(result){
+		  addData(result);
+		}, error:  function(xhr,status,error){
+		  $("#div1").html(error);
+		}});
+	  });
+	});
+	
     var ctx = document.getElementById("myChart").getContext('2d');
     var myChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'horizontalBar',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-            datasets: [{
+            labels: [],
+			datasets: [{
                 label: 'SmileyMeter !',
-                data: [12, 13, 3, 5, 2, 3],
+                data: [],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -64,6 +82,25 @@
             }
         }
     });
+	
+	function addData(result) {
+	    //chart, label, data
+		//alert("Hi");
+		myChart.clear();
+		for (i in result.body.Items) {
+			myChart.data.labels.push(result.body.Items[i].UserId);
+		}
+		//$("#div1").html(label);
+		myChart.data.datasets.forEach((dataset) => {
+			for (i in result.body.Items) {
+				dataset.data.push(result.body.Items[i].score);
+				//dataset.data.label.push(result.body.Items[i].UserId);
+			}
+			
+		});
+		myChart.update();
+    }
+
     </script>
   </body>
 </html>
