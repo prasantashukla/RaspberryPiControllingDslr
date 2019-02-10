@@ -1,6 +1,7 @@
 import boto3
 import json
 rekognition_client=boto3.client('rekognition', region_name='us-west-2')
+lambda_client=boto3.client('lambda', region_name='us-west-2')
 
 FACE_DETECTION_CONFIDENCE_THRESHOLD = 95
 FACE_SIMILARITY_THRESHOLD = 90
@@ -12,25 +13,35 @@ def lambda_handler(event, context):
     smilingUserBoundingBoxes = event["smilingUserBoundingBoxes"]
     participant = event["participant"]
     targetImageFileName = event["targetImageFileName"]
+    noOfPeopleInPhoto = event["noOfPeopleInPhoto"]
 
     compareFacesResponse = compare_faces(participant, event["target_bucket"], targetImageFileName)
     faceMatchMaxSimilarity, boundingBox = getFaceMatchBoundingBox(compareFacesResponse)
-
+    print("faceMatchMaxSimilarity Score", faceMatchMaxSimilarity)
     if faceMatchMaxSimilarity > FACE_SIMILARITY_THRESHOLD:
         print("Found a match for participant ", participant)
+        matchingBoundingBoxOverlapPercentage, smilingUserBoundingBox = getMatchingUserBoundingBox(boundingBox, smilingUserBoundingBoxes)
     
-    matchingBoundingBoxOverlapPercentage, smilingUserBoundingBox = getMatchingUserBoundingBox(boundingBox, smilingUserBoundingBoxes)
-    
-    if(matchingBoundingBoxOverlapPercentage > BOUNDING_BOX_OVERLAP_AREA_THRESHOLD):
-        recordUserSmileConfidence(participant, smilingUserBoundingBox["smileConfidence"])
+        if(matchingBoundingBoxOverlapPercentage > BOUNDING_BOX_OVERLAP_AREA_THRESHOLD):
+            recordUserSmileConfidence(participant, smilingUserBoundingBox["smileConfidence"], noOfPeopleInPhoto)
+    else:
+        print("Participant ", participant, "'s face did not cross matching threshold in the image ", targetImageFileName)
 
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
     }
 
-def recordUserSmileConfidence(participant, smileConfidence):
+def recordUserSmileConfidence(participant, smileConfidence, noOfPeopleInPhoto):
     print("participant ",participant," is smiling with smile Confidence score of ", smileConfidence)
+    event = {"userId" : participant,
+                "smileConfidence" : smileConfidence, 
+                "noOfPeopleInPhoto" : noOfPeopleInPhoto}
+    print("Putting data in datastore with values ", json.dumps(event))
+    lambda_client.invoke(FunctionName="recordSmileScoreForUser", 
+                            InvocationType='Event', 
+                            Payload=json.dumps(event))
+    # Call Shukla's lambda here with the arguments
 
 def getMatchingUserBoundingBox(boundingBox, smilingUserBoundingBoxes):
     overlapPercentage = 0
@@ -78,6 +89,8 @@ def getArea(boundingBox):
     return boundingBox["Height"] * boundingBox["Width"]
 
 def getOverlapAreaPercentage(boundingBox1, boundingBox2):
+    if(boundingBox1 is None or boundingBox2 is None):
+        return 0
     # boundingBox1 Variables
     l1 = boundingBox1["Left"]
     t1 = boundingBox1["Top"]
