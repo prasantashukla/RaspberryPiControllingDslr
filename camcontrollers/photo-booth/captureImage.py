@@ -30,27 +30,43 @@ def runGpCommand(cmd):
     gp(cmd)
 
 def createSaveFolder(folder_name):
-    save_location = "/tmp/" + folder_name
+    save_location = folder_name
     try:
         os.makedirs(save_location)
     except:
         print("Did not create directory.")
-    os.chdir(save_location)
+    #os.chdir(save_location)
+    sleep(0.1)
+    return folder_name
 
-def captureImages():
+def captureImages(folder_name):
+    print("killing gphoto2 process")
     killGphoto2Process()
+    print("Capturing image")
     gp(triggerCommand)
-    sleep(3)
+    sleep(1)
+    print("Downloading data")
+    os.chdir(folder_name)
     gp(downloadCommand)
+    print("Clearing the data from the photo")
     gp(clearCommand)
+    return folder_name
 
-def renameFiles(picId):
+def renameFiles(folder_name, picId):
+    cwd = os.getcwd()
+    #print("insidee renamefiles with current directory as  " + os.getcwd())
+    #print(os.listdir(folder_name))
+
+    latestFileCaptured = None
     for filename in os.listdir("."):
+        print(filename)
         if len(filename) < 13:
             if filename.endswith(".JPG"):
-                os.rename(filename, (picId + ".JPG"))
-                print("Renamed the JPG as " + picId)
-    return "dummyFileName"
+                picName = picId+".JPG"
+                os.rename(filename, picName)
+                print("Renamed the JPG as " + picName)
+                latestFileCaptured = picName
+    return cwd+"/"+latestFileCaptured
 
 #killGphoto2Process()
 #gp(clearCommand)

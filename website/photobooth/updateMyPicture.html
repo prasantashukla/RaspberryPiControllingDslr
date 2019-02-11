@@ -28,23 +28,28 @@
             },
             success: function () { }
         });
-        function updatePicture() {
+        function takepicture() {
             var datastring = $('#form1').serialize();
+            $.post('http://localhost:5000/takepicture', datastring, function (result) {
+                console.log(result.picName);
+                imgsrc = result.picName;
+                console.log(imgsrc);
+                $("#latestPicId").attr("src", imgsrc);
+                $("#latestPicDiv").show();
+            });
             /**
-            $.post("http://localhost:5000/takepicture", datastring, function (data) {
-                console.log(data.picName);
-            }, "json");
-
-            **/
             $.ajax({
                 type: 'POST',
                 url: 'http://localhost:5000/takepicture',
                 data: datastring,
                 success: function (result) {
-                        console.log(JSON.stringify(result));
+
                 }
             });
+            **/
         };
+
+
 
     </script>
     <div class="jumbotron text-center">
@@ -55,22 +60,31 @@
     <div id="loadingDiv" name="loadingDiv" hidden=true>
         <img src="loading7_gray.gif" />
     </div>
+
+    </div>
     <div class="container">
+        <div id="latestPicDiv" class="row" hidden=true>
+            <div class="col-lg-8">
+                <img id="latestPicId" src=""  width=80% />
+            </div>
+            <div class="col-lg-4">
+                <button class="btn btn-primary" onclick="updatePictureInDatabase()"> Update picture</button>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-lg-12">
-                <form id="form1" name="form1" onsubmit="return updatePicture()">
-                    <div class="form-group row">
-                        <a href="#" class="btn btn-info" role="button">Take picture</a>
-                    </div>
+                <form id="form1" name="form1" onsubmit="return takepicture()">
                     <div class="form-group row" id="userIdForm">
                         <label for="staticEmail" class="col-sm-2 col-form-label">Your Amazon userId</label>
                         <input type="text" class="form-control-plaintext" id="userId" name="userId">
-                        <input class="btn btn-primary" type="submit" value="Submit">
+                        <input class="btn btn-primary" type="submit" value="Take Picture">
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 </body>
 
 

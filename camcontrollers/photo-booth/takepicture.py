@@ -27,15 +27,14 @@ s3 = boto3.client('s3')
 def takePicture():
     print("Taking picture")
     shot_date = datetime.now().strftime("%Y-%m-%d")
-    shot_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    c.createSaveFolder(shot_date+ PIC_ID)
-    c.captureImages()
-    fileName = c.renameFiles(shot_time + PIC_ID)
+    shot_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    folderName1 = c.createSaveFolder(shot_date)
+    folderName2 = c.captureImages(folderName1)
+    fileName = c.renameFiles(folderName2, shot_time + PIC_ID)
 
     response = jsonify({"userId":"avidubey", "picName":fileName})
     response.headers.add('Access-Control-Allow-Origin', '*')
 
-    #cars = request.form
     print("returning response after successful photo capture")
     return response
 
